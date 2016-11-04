@@ -1,0 +1,29 @@
+{
+  "name": "pixijs-map-layer",
+  "version": "1.0.0",
+  "description": "Google maps extension that uses Pixi.JS to efficiently render GeoJSON data.",
+  "main": "src/PixiLayer.js",
+  "directories": {
+    "example": "example"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RishabhJain96/pixijs-map-layer.git"
+  },
+  "keywords": [
+    "PixiJS",
+    "google",
+    "maps",
+    "google-maps",
+    "WebGL"
+  ],
+  "author": "Rishabh Jain",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/RishabhJain96/pixijs-map-layer/issues"
+  },
+  "homepage": "https://github.com/RishabhJain96/pixijs-map-layer#readme"
+}
