@@ -1,3 +1,1 @@
-export default {
-    default as PixiLayer,
-} from "./PixiLayer.js";
+export default from "./PixiLayer.js";
