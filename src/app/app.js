@@ -1,4 +1,4 @@
-import { PixiLayer } from '../../lib';
+import { default as PixiLayer } from '../../lib';
 
 $(document).ready(function() {
     var mapOptions = {
