@@ -82,4 +82,8 @@ export default class PixiLayer {
             this.stage.removeChild(this.stage.children[i]);
         }
     }
+
+    setMap = (map) => {
+        this.map = map;
+    }
 }
