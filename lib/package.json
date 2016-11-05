@@ -5,9 +5,17 @@
   "main": "lib/index.js",
   "scripts": {
     "start": "watchify src/app/app.js -o public/app.js -t [ babelify --presets [es2015 stage-0 ] ]",
-    "start:lib": "babel --watch src/lib -d lib",
-    "build:app": "browserify src/app/app.js -o public/app.js -t [ babelify --presets [es2015 stage-0 ] ]",
-    "build:lib": "babel src/lib -d lib",
+    "test": "",
+    "build:app": "",
+    "clean": "",
+    "lint": "",
+    "prebuild:lib": "",
+    "build:lib": "browserify src/lib/index.js -o lib/index.js -t [ babelify --presets [es2015 stage-0 ] ]",
+    "precommit:lib": "",
+    "commit:lib": "",
+    "precommit:app": "",
+    "commit:app": "",
+    "prerelease": "",
     "release": "standard-version"
   },
   "repository": {
@@ -35,12 +43,8 @@
     "pixi.js": "^4.1.1"
   },
   "devDependencies": {
-    "babel-cli": "^6.18.0",
     "babel-core": "^6.18.2",
     "babel-preset-es2015": "^6.18.0",
-    "babel-preset-stage-0": "^6.16.0",
-    "babelify": "^7.3.0",
-    "browserify": "^13.1.1",
-    "watchify": "^3.7.0"
+    "babel-preset-stage-0": "^6.16.0"
   }
 }
