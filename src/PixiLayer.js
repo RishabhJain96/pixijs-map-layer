@@ -1,20 +1,24 @@
-function PixiLayer(map, interactive) {
+function PixiLayer(map, options) {
     this.map = map;
     this.resolutionScale = window.devicePixelRatio || 1;
-    this.interactive = interactive || false;
+
+    options = options || {};
+
+    this.interactive = options.interactive || false;
 
     this.canvasLayer = new CanvasLayer({
         map: map,
         animate: false,
         resolutionScale: this.resolutionScale,
-        paneName: 'overlayMouseTarget',
+        paneName: (this.interactive ? 'overlayMouseTarget' : 'overlayLayer'),
     });
 
     this.renderer = PIXI.autoDetectRenderer(this.canvasLayer.canvas.width, this.canvasLayer.canvas.height, {
         view: this.canvasLayer.canvas,
-        transparent: true,
-        forceFXAA: true,
-        antiAlias: true,
+        transparent: options.transparent || true,
+        forceFXAA: options.forceFXAA || true,
+        antiAlias: options.antiAlias || true,
+        resolution: options.resolution || (window.devicePixelRatio || 1),
     });
 
     this.stage = new PIXI.Container();
