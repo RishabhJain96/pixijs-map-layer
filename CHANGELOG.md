@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.1.2"></a>
+## [1.1.2](https://github.com/RishabhJain96/pixijs-map-layer/compare/v1.1.1...v1.1.2) (2016-11-05)
+
+
+### Bug Fixes
+
+* **PixiLayerSetMap:** Added a SetMap feature ([15ac5bf](https://github.com/RishabhJain96/pixijs-map-layer/commit/15ac5bf))
+
+
+
 <a name="1.1.1"></a>
 ## [1.1.1](https://github.com/RishabhJain96/pixijs-map-layer/compare/v1.1.0...v1.1.1) (2016-11-05)
 
