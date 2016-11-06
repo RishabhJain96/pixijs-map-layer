@@ -86,4 +86,8 @@ export default class PixiLayer {
     setMap = (map) => {
         this.map = map;
     }
+
+    rerender = () => {
+        this.renderer.render(this.stage);
+    }
 }
