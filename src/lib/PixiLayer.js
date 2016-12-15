@@ -17,21 +17,6 @@ export default class PixiLayer {
             ...options,
         }
 
-        this.canvasLayer = new CanvasLayer({
-            map: map,
-            animate: this.options.animate,
-            resolutionScale: this.options.resolutionScale,
-            paneName: this.options.paneName,
-        });
-
-        this.renderer = PIXI.autoDetectRenderer(this.canvasLayer.canvas.width, this.canvasLayer.canvas.height, {
-            view: this.canvasLayer.canvas,
-            ...options,
-        });
-
-        this.stage = new PIXI.Container();
-        this.stage.interactive = this.options.interactive;
-
         function updateHandler() {
             var mapProjection = this.map.getProjection();
             var scale = Math.pow(2, this.map.zoom) * pixiLayer.options.resolutionScale;
@@ -43,19 +28,38 @@ export default class PixiLayer {
             pixiLayer.stage.scale.x = scale;
             pixiLayer.stage.scale.y = scale;
 
-            pixiLayer.renderer.render(pixiLayer.stage);            
+            pixiLayer.renderer.render(pixiLayer.stage);
         }
 
         function resizeHandler() {
             pixiLayer.renderer.resize(this.canvas.width, this.canvas.height);
         }
 
+
         const pixiLayer = this;
         updateHandler.bind(pixiLayer);
         resizeHandler.bind(pixiLayer);
 
-        this.canvasLayer.setUpdateHandler(updateHandler);
-        this.canvasLayer.setResizeHandler(resizeHandler);
+        this.canvasLayer = new CanvasLayer({
+            map: map,
+            animate: this.options.animate,
+            resolutionScale: this.options.resolutionScale,
+            paneName: this.options.paneName,
+            resizeHandler: resizeHandler,
+            updateHandler: updateHandler,
+        });
+
+        this.renderer = PIXI.autoDetectRenderer(this.canvasLayer.canvas.width, this.canvasLayer.canvas.height, {
+            view: this.canvasLayer.canvas,
+            ...options,
+        });
+
+        this.stage = new PIXI.Container();
+        this.stage.interactive = this.options.interactive;
+
+        this.prevHeight;
+        this.prevWidth;
+        this.ratio;
 
         this.renderer.render(this.stage);
     }

@@ -32,11 +32,72 @@ function _classCallCheck(instance, Constructor) {
 var PIXI = require('pixi.js');
 
 var PixiLayer = function PixiLayer(map) {
-    var _this = this;
-
     var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
     _classCallCheck(this, PixiLayer);
+
+    _initialiseProps.call(this);
+
+    this.map = map;
+
+    this.options = _extends({
+        animate: false,
+        resolutionScale: window.devicePixelRatio || 1,
+        interactive: true,
+        paneName: 'overlayMouseTarget',
+        transparent: true,
+        forceFXAA: true,
+        antiAlias: true,
+        resolution: window.devicePixelRatio || 1
+    }, options);
+
+    function updateHandler() {
+        var mapProjection = this.map.getProjection();
+        var scale = Math.pow(2, this.map.zoom) * pixiLayer.options.resolutionScale;
+        var offset = mapProjection.fromLatLngToPoint(this.getTopLeft());
+
+        pixiLayer.stage.position.x = -offset.x * scale;
+        pixiLayer.stage.position.y = -offset.y * scale;
+
+        pixiLayer.stage.scale.x = scale;
+        pixiLayer.stage.scale.y = scale;
+
+        pixiLayer.renderer.render(pixiLayer.stage);
+    }
+
+    function resizeHandler() {
+        pixiLayer.renderer.resize(this.canvas.width, this.canvas.height);
+    }
+
+    var pixiLayer = this;
+    updateHandler.bind(pixiLayer);
+    resizeHandler.bind(pixiLayer);
+
+    this.canvasLayer = new _canvaslayer2.default({
+        map: map,
+        animate: this.options.animate,
+        resolutionScale: this.options.resolutionScale,
+        paneName: this.options.paneName,
+        resizeHandler: resizeHandler,
+        updateHandler: updateHandler
+    });
+
+    this.renderer = PIXI.autoDetectRenderer(this.canvasLayer.canvas.width, this.canvasLayer.canvas.height, _extends({
+        view: this.canvasLayer.canvas
+    }, options));
+
+    this.stage = new PIXI.Container();
+    this.stage.interactive = this.options.interactive;
+
+    this.prevHeight;
+    this.prevWidth;
+    this.ratio;
+
+    this.renderer.render(this.stage);
+};
+
+var _initialiseProps = function _initialiseProps() {
+    var _this = this;
 
     this.addLayer = function (drawFunction) {
         var layer = new PIXI.Container();
@@ -61,59 +122,13 @@ var PixiLayer = function PixiLayer(map) {
         }
     };
 
-    this.map = map;
+    this.setMap = function (map) {
+        _this.map = map;
+    };
 
-    this.options = _extends({
-        animate: false,
-        resolutionScale: window.devicePixelRatio || 1,
-        interactive: true,
-        paneName: 'overlayMouseTarget',
-        transparent: true,
-        forceFXAA: true,
-        antiAlias: true,
-        resolution: window.devicePixelRatio || 1
-    }, options);
-
-    this.canvasLayer = new _canvaslayer2.default({
-        map: map,
-        animate: this.options.animate,
-        resolutionScale: this.options.resolutionScale,
-        paneName: this.options.paneName
-    });
-
-    this.renderer = PIXI.autoDetectRenderer(this.canvasLayer.canvas.width, this.canvasLayer.canvas.height, _extends({
-        view: this.canvasLayer.canvas
-    }, options));
-
-    this.stage = new PIXI.Container();
-    this.stage.interactive = this.options.interactive;
-
-    function updateHandler() {
-        var mapProjection = this.map.getProjection();
-        var scale = Math.pow(2, this.map.zoom) * pixiLayer.options.resolutionScale;
-        var offset = mapProjection.fromLatLngToPoint(this.getTopLeft());
-
-        pixiLayer.stage.position.x = -offset.x * scale;
-        pixiLayer.stage.position.y = -offset.y * scale;
-
-        pixiLayer.stage.scale.x = scale;
-        pixiLayer.stage.scale.y = scale;
-
-        pixiLayer.renderer.render(pixiLayer.stage);
-    }
-
-    function resizeHandler() {
-        pixiLayer.renderer.resize(this.canvas.width, this.canvas.height);
-    }
-
-    var pixiLayer = this;
-    updateHandler.bind(pixiLayer);
-    resizeHandler.bind(pixiLayer);
-
-    this.canvasLayer.setUpdateHandler(updateHandler);
-    this.canvasLayer.setResizeHandler(resizeHandler);
-
-    this.renderer.render(this.stage);
+    this.rerender = function () {
+        _this.renderer.render(_this.stage);
+    };
 };
 
 exports.default = PixiLayer;
@@ -122,21 +137,19 @@ exports.default = PixiLayer;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
-    value: true
+  value: true
 });
+exports.default = undefined;
 
 var _PixiLayer = require("./PixiLayer.js");
 
-Object.defineProperty(exports, "PixiLayer", {
-    enumerable: true,
-    get: function get() {
-        return _interopRequireDefault(_PixiLayer).default;
-    }
-});
+var _PixiLayer2 = _interopRequireDefault(_PixiLayer);
 
 function _interopRequireDefault(obj) {
-    return obj && obj.__esModule ? obj : { default: obj };
+  return obj && obj.__esModule ? obj : { default: obj };
 }
+
+exports.default = _PixiLayer2.default;
 
 },{"./PixiLayer.js":1}],3:[function(require,module,exports){
 /**
@@ -522,7 +535,7 @@ CanvasLayer.prototype.onAdd = function() {
   this.setPane_();
 
   this.resizeListener_ = google.maps.event.addListener(this.getMap(),
-      'resize', this.resizeFunction_);
+      'bounds_changed', this.resizeFunction_);
   this.centerListener_ = google.maps.event.addListener(this.getMap(),
       'center_changed', this.repositionFunction_);
 
@@ -708,6 +721,10 @@ module.exports = CanvasLayer;
 
 var _lib = require('../../lib');
 
+var _lib2 = _interopRequireDefault(_lib);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 $(document).ready(function () {
     var mapOptions = {
         center: { lat: 34.0522, lng: -118.2437 },
@@ -716,7 +733,7 @@ $(document).ready(function () {
     var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
     function initialize() {
         var myLayer;
-        myLayer = new _lib.PixiLayer(map, {
+        myLayer = new _lib2.default(map, {
             transparent: true
         });
         myLayer.addLayer(function (layer, mapProjection) {
